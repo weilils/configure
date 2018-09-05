@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.o2o.dao.AreaDao">
+<select id="search" resultMap="AreaRes">
+ SELECT * FROM area ORDER BY priority
+</select>
+ <resultMap type="com.o2o.entity.Area" id="AreaRes">
+        <id property="Id" column="id"/><!-- id设置主键与模型的映射关系 -->
+        <result property="name" column="name"/><!-- result 设置其他属性与模型映射的关系 -->
+ 		<result property="priority" column="priority"/>
+  		<result property="creatTime" column="create_time"/>
+   		<result property="modifytime" column="modify_time"/>
+</resultMap>
+</mapper>
+

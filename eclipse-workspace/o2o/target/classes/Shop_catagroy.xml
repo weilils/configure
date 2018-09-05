@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.o2o.dao.ShopCataDao"><!--namespace与对应的dao层接口相同 -->
+	<select id="getShopCatagroy" resultMap="CataMap">
+		SELECT * FROM shop_catagroy
+		<where>
+			<if test="shop_catagroy!=null">
+				and parentid is not null
+			</if><!--设置店铺的类别不能为1级目录只能是二级-->
+			<if test="shop_catagroy.parent!=null">
+				and parentid=#{shop_catagroy.parent.id}
+			</if>
+		</where>
+		order by priority desc;
+	</select>
+	<resultMap id="CataMap" type="com.o2o.entity.Shop_catagray">
+		<id property="id" column="id" /><!-- id设置主键与模型的映射关系 -->
+		<result property="name" column="name" /><!-- result 设置其他属性与模型映射的关系 -->
+		<result property="priority" column="priority" />
+		<result property="description" column="description" />
+		<result property="img" column="img" />
+		<result property="creatTime" column="create_time" />
+		<result property="last_modifytime" column="last_modifytime" />
+	</resultMap>
+</mapper>

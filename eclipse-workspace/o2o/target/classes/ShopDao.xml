@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.o2o.dao.ShopDao"><!--namespace与对应的dao层接口相同 -->
+	<select id="getShopList" resultMap="ShopReMap">
+		SELECT
+		shop_inf.id,shop_inf.`name`,shop_inf.description,shop_inf.priority,
+		shop_inf.enable_status,shop_inf.advice,shop_inf.address,shop_inf.contacct_inf,shop_inf.img,
+		shop_inf.last_modifytime,
+		sc.id as scid,sc.`name` as scname,a.id as
+		aid,a.`name` as aname,`user`.id
+		asuserid,`user`.`name` as username from
+		shop_inf,area as a,shop_catagroy as
+		sc, `user`
+		<where>
+			<if test="ShopCondition!=null and ShopCondition.id!=null">
+				AND shop_inf.id=#{ShopCondition.id}
+			</if>
+			<if test="ShopCondition!=null and ShopCondition.name!=null">
+				AND shop_inf.`name`='%#{ShopCondition.name}%'
+			</if>
+			<if
+				test="ShopCondition!=null and ShopCondition.area!=null and ShopCondition.area.id!=null">
+				AND shop_inf.area_id=#{ShopCondition.area.id}
+			</if>
+			<if
+				test="ShopCondition!=null and ShopCondition.catagray!=null and ShopCondition.catagray.id!=null">
+				AND shop_inf.catagroy_id=#{ShopCondition.catagray.id}
+			</if>
+			<if
+				test="ShopCondition!=null and ShopCondition.onwer!=null and ShopCondition.onwer.id!=null">
+				AND shop_inf.onwer_id=#{ShopCondition.onwer.id}
+			</if>
+		</where>
+		AND shop_inf.area_id=a.id AND
+		shop_inf.catagroy_id=sc.id AND
+		`user`.id=shop_inf.onwer_id
+		order by shop_inf.priority DESC LIMIT
+		#{StartIndex},#{PageSize};
+	</select>
+	<select id="getSelectSize" resultType="int">
+	<!-- 对统计来说limit条件无效 -->
+		SELECT COUNT(*)
+		FROM
+		shop_inf,area as a,shop_catagroy as
+		sc, `user`
+		<where>
+			<if test="ShopCondition!=null and ShopCondition.id!=null">
+				AND shop_inf.id=#{ShopCondition.id}
+			</if>
+			<if test="ShopCondition!=null and ShopCondition.name!=null">
+				AND shop_inf.`name`='%#{ShopCondition.name}%'
+			</if>
+			<if
+				test="ShopCondition!=null and ShopCondition.area!=null and ShopCondition.area.id!=null">
+				AND shop_inf.area_id=#{ShopCondition.area.id}
+			</if>
+			<if
+				test="ShopCondition!=null and ShopCondition.catagray!=null and ShopCondition.catagray.id!=null">
+				AND shop_inf.catagroy_id=#{ShopCondition.catagray.id}
+			</if>
+			<if
+				test="ShopCondition!=null and ShopCondition.onwer!=null and ShopCondition.onwer.id!=null">
+				AND shop_inf.onwer_id=#{ShopCondition.onwer.id}
+			</if>
+		</where>
+		AND shop_inf.area_id=a.id AND
+		shop_inf.catagroy_id=sc.id AND
+		`user`.id=shop_inf.onwer_id
+		order by shop_inf.priority DESC
+	</select>
+
+	<select id="getShopInfo" parameterType="Long"
+		resultMap="ShopReMap">
+		SELECT
+		shop_inf.id,shop_inf.`name`,shop_inf.description,shop_inf.priority,
+		shop_inf.enable_status,shop_inf.advice,shop_inf.address,shop_inf.contacct_inf,shop_inf.img,
+		shop_inf.last_modifytime,
+		sc.id as scid,sc.`name` as scname,a.id as
+		aid,a.`name` as aname,`user`.id
+		asuserid,`user`.`name` as username from
+		shop_inf,area as a,shop_catagroy as
+		sc, `user` WHERE
+		shop_inf.id=#{shopId} AND shop_inf.area_id=a.id AND
+		shop_inf.catagroy_id=sc.id AND `user`.id=shop_inf.onwer_id
+	</select>
+	<resultMap id="ShopReMap" type="com.o2o.entity.Shop">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="description" property="description" />
+		<result column="priority" property="priority" />
+		<result column="enable_status" property="enable_status" />
+		<result column="advice" property="advice" />
+		<result column="address" property="address" />
+		<result column="contacct_inf" property="contact_inf" />
+		<result column="img" property="imag" />
+		<result column="last_modifytime" property="last_modifytime" />
+		<association property="area"
+			javaType="com.o2o.entity.Area">
+			<id column="aid" property="id" />
+			<result column="aname" property="name" />
+		</association>
+		<association property="onwer"
+			javaType="com.o2o.entity.personinf">
+			<id column="userid" property="id" />
+			<result column="username" property="name" />
+		</association>
+		<association property="catagray"
+			javaType="com.o2o.entity.Shop_catagray">
+			<id column="scid" property="id" />
+			<result column="scname" property="name" />
+		</association>
+	</resultMap>
+	<insert id="addShop" useGeneratedKeys="true" keyColumn="id"
+		keyProperty="id"><!-- id为dao层中对应的方法插入完成后返回自增列的值 keyColumn数据库的主键，keyProperty实体类的对应的属性 -->
+		INSERT INTO
+		shop_inf(`name`,`description`,`priority`,`catagroy_id`,`onwer_id`,`area_id`,
+		`enable_status`,`advice`,`address`,`contacct_inf`,`img`,`create_time`,`last_modifytime`)
+		VALUES(#{name},#{description},#{priority},#{catagray.id},#{onwer.id},#{area.id},#{enable_status}
+		,#{advice},#{address},#{contact_inf},#{imag},#{createtime},#{last_modifytime});
+	</insert>
+	<update id="updateShop" parameterType="com.o2o.entity.Shop"> <!--id是对应的插入方法 -->
+		UPDATE shop_inf
+		<set>
+			<if test="name!=null">`name`=#{name},</if><!-- if test中的为java实体类中的属性,if标签的中的前面是数据库的对应字段 -->
+			<if test="description!=null">`description`=#{description},</if>
+			<if test="priority!=null">`priority`=#{priority},</if>
+			<if test="catagray!=null">`catagroy_id`=#{catagray.id},</if>
+			<if test="area!=null">`area_id`=#{area.id},</if>
+			<if test="enable_status!=null">`enable_status`=#{enable_status},</if>
+			<if test="address!=null">`address`=#{address},</if>
+			<if test="contact_inf!=null">`contacct_inf`=#{contact_inf},</if>
+			<if test="imag!=null">`img`=#{imag},</if>
+			<if test="last_modifytime!=null">`last_modifytime`=#{last_modifytime}</if>
+		</set><!-- 动态的sql语句 -->
+		WHERE `id`=#{id};
+	</update>
+</mapper>

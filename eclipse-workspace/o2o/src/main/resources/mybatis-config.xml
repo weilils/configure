@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration><!-- 全局配置 -->
+	<!--setting是指定MyBatis的一些全局配置属性，这是MyBatis中极为重要的调整设置，它们会改变MyBatis的运行时行为， -->
+	<!--所以我们需要清楚的知道这些属性的作用及默认值。 -->
+	<settings>
+		<!-- 使用jdbc的getGeneratedKeys获取数据库自增主键值 -->
+		<setting value="true" name="useGeneratedKeys" />
+		<!-- 使用列别名替换列名 默认:true -->
+		<setting value="true" name="useColumnLabel" />
+		<!-- 开启驼峰命名转换:Table{create_time} -> Entity{createTime} -->
+		<setting value="true" name="mapUnderscoreToCamelCase" />
+		<!-- 打印查询语句 -->
+		<setting value="STDOUT_LOGGING" name="logImpl" />
+	</settings>
+</configuration>

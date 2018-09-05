@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="20 seconds" debug="false"><!-- 定期扫描, 不输出logback的相关信息-->
+<!-- 定义参数常量 -->
+<!-- TRACE<DEBUG<INFO<WARN<ERROR -->
+<property name="log.level" value="debug"/>
+<property name="log.maxHistory" value="30"/><!-- 最长报存日期30天 -->
+<property name="log.filePath" value="${catalina.base}/logs/web"/><!-- tomat实例的根目录 -->
+<property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:SSS} [%thread]%-5level%logger{50}-%msg%n"/>
+<!-- 打印日志到控制台的相关设置 -->
+<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+<encoder>
+<pattern>${log.pattern}</pattern>
+</encoder>
+</appender>
+<!-- Debug的相关设置 -->
+<appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!-- 文件路径 -->
+<file>${log.filePath}/debug.log</file><!-- 日志文件先写如debug.log写满后存放入压缩包中 -->
+<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+<fileNamePattern>
+${log.filePath}/debug/debug.%d{yyyy-MM-dd}.log.zip
+</fileNamePattern>
+<maxHistory>${log.maxHistory}</maxHistory>
+</rollingPolicy>
+<encoder>
+<pattern>${log.pattern}</pattern>
+</encoder>
+<filter class="ch.qos.logback.classic.filter.LevelFilter">
+<level>DEBUG</level>
+<onMatch>ACCEPT</onMatch>
+<onMismatch>DENY</onMismatch>
+</filter>
+</appender>
+<!-- INFO的相关设置 -->
+<appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!-- 文件路径 -->
+<file>${log.filePath}/info.log</file>
+<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+<fileNamePattern>
+${log.filePath}/info/info.%d{yyyy-MM-dd}.log.zip
+</fileNamePattern>
+<!-- 最大文件保存数量 -->
+<maxHistory>${log.maxHistory}</maxHistory>
+</rollingPolicy>
+<encoder>
+<pattern>${log.pattern}</pattern>
+</encoder>
+<filter class="ch.qos.logback.classic.filter.LevelFilter">
+<level>INFO</level>
+<onMatch>ACCEPT</onMatch>
+<onMismatch>DENY </onMismatch>
+</filter>
+</appender>
+<!-- ERROR的相关设置 -->
+<appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!-- 文件路径 -->
+<file>${log.filePath}/error.log</file>
+<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+<fileNamePattern>
+${log.filePath}/error/error.%d{yyyy-MM-dd}.log.zip
+</fileNamePattern>
+<!-- 最大文件保存数量 -->
+<maxHistory>${log.maxHistory}</maxHistory>
+</rollingPolicy>
+<encoder>
+<pattern>${log.pattern}</pattern>
+</encoder>
+<filter class="ch.qos.logback.classic.filter.LevelFilter">
+<level>ERROR</level>
+<onMatch>ACCEPT</onMatch>
+<onMismatch>DENY</onMismatch>
+</filter>
+</appender>
+<logger name="com.o2o" level="${log.level}" additivity="true"><!--additivity="true"logger中的信息也会出项在控制台其级别为logger的级别(类似于继承)  -->
+<appender-ref ref="debugAppender"/><!-- 将appender与logger绑定 -->
+<appender-ref ref="infoAppender"/>
+<appender-ref ref="errorAppender"/>
+</logger>
+<root level="info"><!-- root是一个特殊的logger，所有的logger不能有重复的ref-->
+<appender-ref ref="consoleAppender"></appender-ref>
+</root>
+</configuration>
